@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Project;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Role;
 
-class UserController extends Controller
+class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,15 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        // dd(Auth::user()->getPermissionsViaRoles());
-        // $user->getPermissionsViaRoles();
-        $role = Role::where('name', 'admin')->first();
-        // dd($role);
-        $users = User::all();
-        // dd($user);
-        $roles=Role::all();
-        // $user->assignRole($role);
-        return view('users.index',compact('users'));
+        return view('project.index');
     }
 
     /**
@@ -32,10 +22,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $id)
+    public function create()
     {
-        $roles=Role::all();
-        return view('users.assignroletousers', compact(['roles', 'id']));
+        return view('project.create');
     }
 
     /**
@@ -46,14 +35,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::find($request->input('id'));
-        $role = Role::where('name', $request->input('roles'))->first();
-
-
-        $user->assignRole($role);
-
-        return redirect()->route('users.index');
-
+        //
     }
 
     /**

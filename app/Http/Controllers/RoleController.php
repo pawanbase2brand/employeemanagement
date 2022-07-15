@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -17,7 +18,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles=Role::get('name');
+        $roles=Role::all();
         return view('roles.index', compact('roles'));
     }
 
@@ -42,6 +43,19 @@ class RoleController extends Controller
     {
         Role::create(['name' => $request->input('name')]);
         return redirect()->route('roles.create');
+    }
+
+    public function assignPermissionToRole($id){
+
+        $permissions=Permission::all();
+        return view('permissions.assignpermissiontorole', compact('permissions', 'id'));
+    }
+    public function permissionToRole(Request $request){
+        $role = Role::find($request->input('id'));
+        $permission=$request->input('check');
+        $role->syncPermissions($permission);
+        return redirect()->route('roles.index')->with('status', 'Permissions are updated to Roles');
+
     }
 
     /**
@@ -84,8 +98,14 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $role = Role::find($id);
+        if($role->toArray()['name']=='Super Admin'){
+            return redirect()->route('roles.index')->with('status', 'You can not delete Role of  Super Admin');
+        }
+        else{
+            $role->delete();
+        }
     }
 }
